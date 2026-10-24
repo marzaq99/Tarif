@@ -8,3 +8,6 @@ based on the UK Trade Tariff API (Northern Ireland / XI tariff).
 - `netlify.toml` / `package.json`: Netlify configuration
 
 No API key and no environment variable are required.
+
+Netlify publishes `public/` directly; no build command is needed. The API relay
+deploys from `netlify/functions/` and serves `/api/commodity` and `/api/suggest`.
