@@ -1,7 +1,7 @@
 {
-  "name": "tarif-xi",
+  "name": "tarif-schedule",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Tarif XI - rapport mesures et certificats (UK Trade Tariff API, Irlande du Nord)"
+  "description": "TARIF SCHEDULE - measures, certificates and conditions from the UK Trade Tariff API"
 }

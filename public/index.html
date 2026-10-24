@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TARIF SCHEDULE - Measures and Certificates</title>
+<style>
+:root{--accent:#006cdc;--accent2:#005cb8;--ink:#111827;--body:#242c3c;--muted:#606f86;--hint:#8c98aa;--border:#c8d0de;--divider:#e2e8f0;--panel:#f5f8fc;--panelBorder:#dee6f2;--card:#e4eaf4;--footer:#f6f8fb;--ok:#067647;--warn:#b54708;--bad:#b42318}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"Segoe UI",Arial,sans-serif;color:var(--body)}
+body{background:#eef2f7;padding:20px 3vw}
+.app{width:min(1400px,100%);margin:0 auto;background:#fff;border:1px solid #d9e0eb;border-radius:14px;box-shadow:0 22px 55px rgba(23,42,70,.16);overflow:hidden}
+.header{min-height:84px;border-bottom:1px solid var(--divider);display:flex;align-items:center;padding:10px 24px;gap:16px}
+.title{font-size:26px;font-weight:700;letter-spacing:1px;color:var(--ink);line-height:1.1}.subtitle{font-size:12px;color:var(--muted);margin-top:3px}
+.main{padding:18px 24px 24px}
+.searchbar{display:grid;grid-template-columns:1fr 150px 100px 90px 120px;gap:10px;align-items:end}
+.fld label{display:block;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:5px}
+.in{width:100%;height:38px;border:1px solid var(--border);border-radius:6px;padding:0 11px;font:14px "Segoe UI";outline:none;background:#fff;color:var(--body)}
+.in:focus{border-color:#8ba9cc;box-shadow:0 0 0 3px rgba(0,108,220,.08)}
+.btn{height:38px;border:0;border-radius:6px;background:var(--accent);color:#fff;font:600 13px "Segoe UI";cursor:pointer}.btn:hover{background:var(--accent2)}.btn:disabled{opacity:.5;cursor:default}
+.btn2{height:34px;padding:0 14px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--ink);font:600 12px "Segoe UI";cursor:pointer}.btn2:hover{background:#f0f4fa}.btn2.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.hint{font-size:12px;color:var(--muted);margin:8px 0 0;min-height:16px}.hint.err{color:var(--bad)}
+.sugs{margin-top:12px;border:1px solid var(--panelBorder);border-radius:8px;background:var(--panel);max-height:300px;overflow:auto}
+.sug{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:9px 12px;border-bottom:1px solid var(--divider);cursor:pointer;font-size:13px}.sug:last-child{border:0}.sug:hover{background:#eaf2fc}
+.sug b{color:var(--accent)}
+.sugh{padding:8px 12px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--divider)}
+.state{margin:40px 0;text-align:center;color:var(--muted);font-size:13px}.state strong{display:block;color:#334155;font-size:15px;margin-bottom:6px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:18px 0 8px}
+.toolbar .grow{flex:1}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font-size:11px;font-weight:600;padding:5px 10px;border-radius:14px;background:#e8f1fc;color:var(--accent);text-decoration:none}.chip:hover{background:#d6e7fb}
+.sec{border:1px solid var(--panelBorder);border-radius:8px;background:var(--panel);margin-bottom:14px;overflow:hidden;scroll-margin-top:10px}
+.sec h2{margin:0;padding:10px 14px;font-size:13px;letter-spacing:.3px;color:var(--ink);background:var(--card);display:flex;justify-content:space-between;align-items:center}
+.sec h2 span{font-weight:500;font-size:11px;color:var(--muted)}
+.kv{display:grid;grid-template-columns:230px 1fr;gap:4px 12px;padding:12px 14px;font-size:13px}.kv div:nth-child(odd){color:var(--muted)}.kv div:nth-child(even){color:var(--ink);font-weight:600;word-break:break-word}
+.empty{padding:14px;font-size:12px;color:var(--hint)}
+.tw{overflow-x:auto;background:#fff}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th{text-align:left;padding:8px 10px;background:#f1f5fb;color:var(--muted);font-size:10.5px;text-transform:uppercase;letter-spacing:.3px;position:sticky;top:0;white-space:nowrap}
+td{padding:7px 10px;border-top:1px solid var(--divider);vertical-align:top}
+tr.m{cursor:pointer}tr.m:hover td{background:#f2f7fd}
+td.id{font-family:Consolas,monospace;color:var(--accent);white-space:nowrap}
+td.num{text-align:center}
+.tag{display:inline-block;font-size:10px;font-weight:700;border-radius:4px;padding:1px 6px;background:#eef2f7;color:var(--muted)}
+.tag.document{background:#e8f1fc;color:var(--accent)}.tag.exemption{background:#e7f6ec;color:var(--ok)}.tag.negative{background:#fdeceb;color:var(--bad)}.tag.threshold{background:#fff1e0;color:var(--warn)}
+tr.d td{background:#fafcff;padding:10px 14px}
+.det{display:grid;grid-template-columns:150px 1fr;gap:4px 12px;font-size:12px}.det div:nth-child(odd){color:var(--muted)}
+.det ul{margin:0;padding-left:16px}.det li{margin-bottom:3px}
+.vt{padding:10px 14px;font-size:12px}
+.grid9{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;padding:12px 14px}
+.stat{background:#fff;border:1px solid var(--divider);border-radius:8px;padding:10px 12px}.stat b{display:block;font-size:22px;color:var(--ink)}.stat span{font-size:11px;color:var(--muted)}
+.total{padding:10px 14px;font-size:12px;color:var(--muted);text-align:right}
+pre.raw{margin:0;padding:14px;background:#0f172a;color:#e2e8f0;font:12px/1.45 Consolas,"Courier New",monospace;overflow:auto;border-radius:8px}
+ul.fn{list-style:none;margin:0;padding:6px 14px 10px;font-size:12px}ul.fn li{padding:6px 0;border-bottom:1px solid var(--divider)}ul.fn li:last-child{border:0}ul.fn b{font-family:Consolas,monospace;color:var(--accent);margin-right:8px}
+@media(max-width:900px){.searchbar{grid-template-columns:1fr 1fr}.searchbar .fld:first-child{grid-column:1/3}.kv{grid-template-columns:1fr}.header{padding:10px 16px}.main{padding:14px 14px 20px}}
+@media print{body{padding:0;background:#fff}.app{box-shadow:none;border:0}.searchbar,.toolbar,.chips,.sugs,.hint{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="header">
+    <div><div class="title">TARIF SCHEDULE</div><div class="subtitle">Measures, Certificates and Conditions</div></div>
+  </header>
+  <main class="main">
+    <div class="searchbar">
+      <div class="fld"><label for="q">Code (10 Digits) or Keyword</label><input id="q" class="in" autocomplete="off" spellcheck="false" placeholder="e.g. 8201100000 or shovels..."></div>
+      <div class="fld"><label for="asof">As of Date (Optional)</label><input id="asof" class="in" type="date"></div>
+      <div class="fld"><label for="year">Year (Suggestions)</label><select id="year" class="in"></select></div>
+      <div class="fld"><label for="lang">Language</label><select id="lang" class="in"><option value="en">English</option><option value="fr">French</option><option value="de">German</option><option value="es">Spanish</option></select></div>
+      <div class="fld"><label>&nbsp;</label><button id="go" class="btn">Search</button></div>
+    </div>
+    <div id="hint" class="hint">Enter a 10-digit code to view the report, or a keyword to find code suggestions.</div>
+    <div id="sugs" class="sugs" hidden></div>
+    <div id="out"></div>
+  </main>
+</div>
+
+<script>
+/* ===== Report engine: UK Trade Tariff API (v2) JSON -> model -> text ===== */
+function stripHtml(s){
+  if(s==null)return "";
+  return String(s).replace(/<br\s*\/?>/gi," ").replace(/<[^>]*>/g,"")
+    .replace(/&nbsp;/g," ").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'").replace(/&amp;/g,"&")
+    .replace(/\s+/g," ").trim();
+}
+function buildReport(json){
+  const data=json.data||{}, A=data.attributes||{}, R=data.relationships||{};
+  const inc=new Map();
+  const ofType=t=>(json.included||[]).filter(o=>o.type===t);
+  for(const o of json.included||[])inc.set(o.type+":"+String(o.id),o);
+  const get=ref=>ref&&ref.id!=null?inc.get(ref.type+":"+String(ref.id)):null;
+  const list=rel=>(rel&&Array.isArray(rel.data)?rel.data:[]);
+
+  const dc=(data.meta&&data.meta.duty_calculator)||(json.meta&&json.meta.duty_calculator)||{};
+  const commodity={
+    itemId:A.goods_nomenclature_item_id||"",
+    description:A.description_plain||stripHtml(A.formatted_description)||stripHtml(A.description),
+    declarable:A.declarable,
+    meursing:A.meursing_code,
+    suffix:A.producline_suffix,
+    indents:A.number_indents
+  };
+  const meta={
+    source:dc.source||"xi",
+    tradeDefence:dc.trade_defence,
+    zeroMfn:dc.zero_mfn_duty,
+    entryPrice:dc.entry_price_system,
+    meursing:dc.meursing_code!==undefined?dc.meursing_code:A.meursing_code,
+    vat:dc.applicable_vat_options||{}
+  };
+
+  const ancestors=[];
+  const sec=get(R.section&&R.section.data), cha=get(R.chapter&&R.chapter.data), hea=get(R.heading&&R.heading.data);
+  if(sec)ancestors.push({label:"Section",text:(sec.attributes.numeral||"")+" - "+stripHtml(sec.attributes.title)});
+  if(cha)ancestors.push({label:"Chapter",text:(cha.attributes.goods_nomenclature_item_id||"").slice(0,2)+" - "+(stripHtml(cha.attributes.formatted_description)||stripHtml(cha.attributes.description))});
+  if(hea)ancestors.push({label:"Heading",text:(hea.attributes.goods_nomenclature_item_id||"").slice(0,4)+" - "+(stripHtml(hea.attributes.formatted_description)||stripHtml(hea.attributes.description))});
+  for(const ref of list(R.ancestors)){
+    const c=get(ref); if(c)ancestors.push({label:"Ancestor",text:(c.attributes.goods_nomenclature_item_id||"")+" - "+(c.attributes.description_plain||stripHtml(c.attributes.formatted_description)||stripHtml(c.attributes.description))});
+  }
+
+  const descOf=o=>o?(stripHtml(o.attributes&&o.attributes.description)||String(o.id)):"";
+  function measureRow(ref){
+    const m=get(ref); if(!m)return null;
+    const a=m.attributes||{}, r=m.relationships||{};
+    const mt=get(r.measure_type&&r.measure_type.data), ga=get(r.geographical_area&&r.geographical_area.data), de=get(r.duty_expression&&r.duty_expression.data);
+    const condRefs=list(r.measure_conditions);
+    let duty="";
+    if(de){const d=de.attributes||{};duty=stripHtml(d.base)||stripHtml(d.formatted_base)||stripHtml(d.verbose_duty);}
+    if(!duty)duty=condRefs.length?"(none - see conditions)":"(none)";
+    const ac=get(r.additional_code&&r.additional_code.data), on=get(r.order_number&&r.order_number.data);
+    return{
+      id:String(m.id), type:mt?stripHtml(mt.attributes.description):"", geo:ga?descOf(ga):"", geoId:ga?String(ga.id):"",
+      duty, verbose:de?stripHtml(de.attributes.verbose_duty):"", condIds:condRefs.map(c=>String(c.id)),
+      start:a.effective_start_date||"", end:a.effective_end_date||"",
+      excluded:list(r.excluded_countries).map(x=>{const g=get(x);return g?(String(g.id)+" - "+descOf(g)):String(x.id)}),
+      addCode:ac?((ac.attributes.code||"")+" - "+stripHtml(ac.attributes.description)):"",
+      order:on?String(on.id):"",
+      footnotes:list(r.footnotes).map(x=>{const f=get(x);return f?(f.attributes.code||String(f.id)):String(x.id)}),
+      legal:list(r.legal_acts).map(x=>{const l=get(x);return l?(l.attributes.regulation_code||l.attributes.code||String(l.id)):String(x.id)})
+    };
+  }
+  const imports=list(R.import_measures).map(measureRow).filter(Boolean);
+  const exports_=list(R.export_measures).map(measureRow).filter(Boolean);
+
+  const conds=new Map();
+  for(const row of imports.concat(exports_)){
+    for(const cid of row.condIds){
+      if(conds.has(cid))continue;
+      const c=inc.get("measure_condition:"+cid); if(!c)continue;
+      const a=c.attributes||{};
+      conds.set(cid,{id:cid,code:a.condition_code||"",cls:a.measure_condition_class||"",doc:a.document_code||"",
+        action:a.action_code==null?"":String(a.action_code),actionText:stripHtml(a.action),
+        req:a.requirement==null?null:stripHtml(a.requirement),condText:stripHtml(a.condition)});
+    }
+  }
+  for(const row of imports.concat(exports_))row.conds=row.condIds.map(i=>conds.get(i)).filter(Boolean);
+  const conditions=[...conds.values()];
+
+  const certs=ofType("certificate").map(c=>{const a=c.attributes||{};return{id:String(c.id),type:a.certificate_type_code||"",code:a.certificate_code||a.code||"",desc:stripHtml(a.description||a.formatted_description)}});
+  const foots=ofType("footnote").map(f=>{const a=f.attributes||{};return{id:String(f.id),code:a.code||String(f.id),desc:stripHtml(a.description||a.formatted_description)}});
+
+  const uniq=new Map(); for(const r of imports.concat(exports_))if(!uniq.has(r.id))uniq.set(r.id,r);
+  const ms=[...uniq.values()];
+  const has=(r,cls)=>r.conds.some(c=>c.cls===cls);
+  const attention={
+    docs:ms.filter(r=>has(r,"document")).length,
+    exemptions:ms.filter(r=>has(r,"exemption")).length,
+    thresholds:ms.filter(r=>has(r,"threshold")).length,
+    negatives:ms.filter(r=>has(r,"negative")).length,
+    quota:ms.filter(r=>r.order).length,
+    nConds:conditions.length, nCerts:certs.length, nFoots:foots.length
+  };
+  return{commodity,meta,ancestors,imports,exports:exports_,conditions,certs,foots,attention,total:imports.length+exports_.length};
+}
+
+/* ---------- Plain text report rendering ---------- */
+function toText(M){
+  const pad=(s,n)=>{s=String(s);return s.length>=n?s:s+" ".repeat(n-s.length)};
+  const cut=(s,n)=>{s=String(s);return s.length>n?s.slice(0,n-3)+"...":s};
+  const L160="-".repeat(160), L93="-".repeat(93), E160="=".repeat(160);
+  const out=[];
+  const head=(t,l)=>{out.push(l||L160,t,l||L160)};
+  const kv=(k,v,w)=>out.push("  "+pad(k,w||19)+": "+v);
+  const C=M.commodity, T=M.meta, X=M.attention;
+  head("1. COMMODITY");
+  kv("Item ID",C.itemId);kv("Description",C.description);kv("Declarable",C.declarable);kv("Meursing code",C.meursing);kv("Productline suffix",C.suffix);kv("Number of indents",C.indents);
+  out.push("");
+  head("2. ANCESTORS (heading, chapter, section)");
+  M.ancestors.forEach(a=>out.push("  "+pad(a.label,9)+": "+a.text));
+  out.push("");
+  head("3. META / DUTY CALCULATOR");
+  kv("Source",T.source);kv("Trade defence",T.tradeDefence);kv("Zero MFN duty",T.zeroMfn);kv("Entry price system",T.entryPrice);kv("Meursing code",T.meursing);kv("VAT options",JSON.stringify(T.vat));
+  out.push("");
+  const mtable=(title,rows)=>{
+    head(title,L93);
+    out.push("Measure ID Type                              Geo                     Duty / Rate             Cond",L93);
+    rows.forEach(r=>out.push(pad(r.id,10)+" "+pad(cut(r.type,33),33)+" "+pad(cut(r.geo,23),23)+" "+pad(cut(r.duty,23),23)+" "+r.condIds.length));
+    out.push("");
+  };
+  mtable("4. IMPORT MEASURES",M.imports);
+  mtable("5. EXPORT MEASURES",M.exports);
+  head("6. MEASURE CONDITIONS (all condition objects in scope)");
+  out.push("Cond ID     Code  Class       Doc Code  Actio Requirement",L160);
+  M.conditions.forEach(c=>out.push(pad(c.id,11)+" "+pad(c.code,5)+" "+pad(c.cls,11)+" "+pad(c.doc,9)+" "+pad(c.action,5)+" "+cut(c.req==null?"null":c.req,73)));
+  out.push("");
+  head("7. CERTIFICATES REFERENCED BY THIS COMMODITY");
+  out.push("Cert ID   Type  Code    Description",L160);
+  if(!M.certs.length)out.push("  (none)");
+  M.certs.forEach(c=>out.push(pad(c.id,9)+" "+pad(c.type,5)+" "+pad(c.code,7)+" "+cut(c.desc,113)));
+  out.push("");
+  head("8. FOOTNOTES");
+  M.foots.forEach(f=>out.push("  ["+pad(f.code,10)+"] "+cut(f.desc,113)));
+  out.push("");
+  head("9. CUSTOMS CONTROL - ATTENTION POINTS");
+  kv("Measures with document requirements",X.docs,42);kv("Measures with exemption conditions",X.exemptions,42);kv("Measures with threshold conditions",X.thresholds,42);
+  kv("Measures with negative conditions",X.negatives,42);kv("Measures linked to a quota order number",X.quota,42);
+  kv("Distinct measure_condition objects",X.nConds,42);kv("Distinct certificate objects",X.nCerts,42);kv("Distinct footnote objects",X.nFoots,42);
+  out.push("",E160,"Total measures printed : "+M.total,E160);
+  return out.join("\n");
+}
+if(typeof module!=="undefined")module.exports={buildReport,toText,stripHtml};
+
+</script>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let M=null, rawText="", view="rapport", expanded=new Set(), filter="", curCode="";
+
+/* ---------- Network ---------- */
+function httpErr(status,msg){const e=new Error(msg||("Error "+status));e.status=status;return e}
+async function fetchCommodity(code,asOf){
+  const qs="code="+code+(asOf?"&as_of="+asOf:"");
+  let r=null;
+  try{r=await fetch("/api/commodity?"+qs)}catch(e){r=null}
+  if(r&&(r.headers.get("content-type")||"").includes("json")){
+    const d=await r.json().catch(()=>null);
+    if(r.ok&&d&&d.data)return d;
+    throw httpErr(r.status,d&&d.error);
+  }
+  // Fallback: direct request (requires browser access to the API)
+  let r2;
+  try{r2=await fetch("https://www.trade-tariff.service.gov.uk/xi/api/v2/commodities/"+code+(asOf?"?as_of="+asOf:""),{headers:{Accept:"application/json"}})}
+  catch(e){throw httpErr(0,"Service unavailable: check your connection and that the Netlify function is deployed.")}
+  if(r2.status===404)throw httpErr(404,"Code not found or not declarable (a declarable 10-digit code is required).");
+  if(!r2.ok)throw httpErr(r2.status,"Error du service ("+r2.status+").");
+  return r2.json();
+}
+async function fetchSuggest(term){
+  const r=await fetch("/api/suggest?term="+encodeURIComponent(term)+"&year="+encodeURIComponent($("year").value)+"&lang="+encodeURIComponent($("lang").value));
+  const d=await r.json().catch(()=>null);
+  if(!r.ok)throw httpErr(r.status,d&&d.error);
+  return d;
+}
+
+/* ---------- Search ---------- */
+const digits=s=>String(s).replace(/\D/g,"");
+function setHint(t,err){const h=$("hint");h.textContent=t||"";h.className="hint"+(err?" err":"")}
+async function run(){
+  const raw=$("q").value.trim();
+  if(!raw){setHint("Enter a code or keyword.",true);return}
+  const onlyCode=/^[\d\s.]+$/.test(raw);
+  if(onlyCode&&digits(raw).length===10){await loadReport(digits(raw));return}
+  if(onlyCode&&digits(raw).length<10&&digits(raw).length>=2){await suggest(digits(raw));return}
+  if(onlyCode){setHint("Enter at least 2 digits.",true);return}
+  await suggest(raw);
+}
+async function suggest(term){
+  $("out").innerHTML="";$("sugs").hidden=true;setHint("Searching for suggestions...");
+  try{
+    const d=await fetchSuggest(term);
+    const arr=(d&&d.suggestions)||[];
+    if(!arr.length){setHint("No suggestions for “"+term+"”.",true);return}
+    setHint((d.total||arr.length)+" suggestion(s). Click a code; if it has fewer than 10 digits, complete it and search again.");
+    $("sugs").innerHTML=arr.map(o=>`<div class="sug" data-c="${esc(digits(o.code||""))}"><b>${esc(o.code||"")}</b><span>${esc(stripHtml(o.value))}</span></div>`).join("");
+    $("sugs").hidden=false;
+  }catch(e){setHint(e.message,true)}
+}
+$("sugs").addEventListener("click",e=>{
+  const s=e.target.closest(".sug");if(!s)return;
+  const c=s.dataset.c;$("q").value=c;
+  if(c.length===10){$("sugs").hidden=true;loadReport(c)}
+  else{$("sugs").hidden=true;setHint("This code has "+c.length+" digits: complete it to 10 digits (e.g. "+c+"0".repeat(10-c.length)+"), then press Enter.");$("q").focus()}
+});
+async function loadReport(code){
+  $("sugs").hidden=true;
+  $("go").disabled=true;setHint("Loading report for "+code+"...");
+  $("out").innerHTML='<div class="state"><strong>Loading...</strong>Retrieving tariff data.</div>';
+  try{
+    const json=await fetchCommodity(code,$("asof").value);
+    M=buildReport(json);rawText=toText(M);curCode=code;expanded=new Set();filter="";
+    try{history.replaceState(null,"","#"+code)}catch(e){}
+    setHint("");render();
+  }catch(e){M=null;$("out").innerHTML="";setHint(e.message,true)}
+  finally{$("go").disabled=false}
+}
+$("go").onclick=run;
+$("q").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();run()}});
+
+/* ---------- Display ---------- */
+const yn=v=>v===undefined||v===null?"-":String(v);
+function condTag(c){return `<span class="tag ${esc(c.cls)}">${esc(c.cls||"-")}</span>`}
+function measureRows(rows,key){
+  const f=filter.toLowerCase();
+  const sel=rows.filter(r=>!f||(r.id+" "+r.type+" "+r.geo+" "+r.duty).toLowerCase().includes(f));
+  if(!sel.length)return `<div class="empty">${rows.length?"No measures match the filter.":"No measures."}</div>`;
+  let h=`<div class="tw"><table><thead><tr><th>Measure ID</th><th>Type</th><th>Geo</th><th>Duty / Rate</th><th>Cond</th></tr></thead><tbody>`;
+  for(const r of sel){
+    const k=key+r.id, open=expanded.has(k);
+    h+=`<tr class="m" data-k="${esc(k)}"><td class="id">${open?"&#9662; ":"&#9656; "}${esc(r.id)}</td><td>${esc(r.type)}</td><td>${esc(r.geo)}</td><td>${esc(r.duty)}</td><td class="num">${r.condIds.length}</td></tr>`;
+    if(open){
+      const lines=[];
+      lines.push(["Detailed duty",esc(r.verbose||r.duty)]);
+      lines.push(["Country / area",esc(r.geoId+" - "+r.geo)]);
+      if(r.excluded.length)lines.push(["Excluded countries",esc(r.excluded.join(", "))]);
+      if(r.addCode)lines.push(["Additional code",esc(r.addCode)]);
+      if(r.order)lines.push(["Quota order number",esc(r.order)]);
+      lines.push(["Validity",esc((r.start||"").slice(0,10)+" → "+((r.end||"").slice(0,10)||"no end date"))]);
+      if(r.legal.length)lines.push(["Legal basis",esc(r.legal.join(", "))]);
+      if(r.footnotes.length)lines.push(["Footnotes",esc(r.footnotes.join(", "))]);
+      if(r.conds.length)lines.push(["Conditions","<ul>"+r.conds.map(c=>`<li>${condTag(c)} <b>${esc(c.code)}</b> ${esc(c.doc)} - action ${esc(c.action)}${c.actionText?" ("+esc(c.actionText)+")":""}<br>${esc(c.req==null?"null":c.req)}</li>`).join("")+"</ul>"]);
+      h+=`<tr class="d"><td colspan="5"><div class="det">${lines.map(l=>`<div>${l[0]}</div><div>${l[1]}</div>`).join("")}</div></td></tr>`;
+    }
+  }
+  return h+"</tbody></table></div>";
+}
+function render(){
+  if(!M){$("out").innerHTML="";return}
+  const C=M.commodity,T=M.meta,X=M.attention;
+  let h=`<div class="toolbar">
+    <button class="btn2 ${view==="rapport"?"on":""}" data-v="rapport">Report</button>
+    <button class="btn2 ${view==="brut"?"on":""}" data-v="brut">Plain Text</button>
+    <span class="grow"></span>
+    <button class="btn2" id="bcopy">Copy Report</button>
+    <button class="btn2" id="bdl">Download (.txt)</button>
+    <button class="btn2" id="bprint">Print</button></div>`;
+  if(view==="brut"){$("out").innerHTML=h+`<pre class="raw">${esc(rawText)}</pre>`;bind();return}
+  h+=`<div class="chips">${[["s1","1 Commodity"],["s2","2 Ancestors"],["s3","3 Meta"],["s4","4 Import ("+M.imports.length+")"],["s5","5 Export ("+M.exports.length+")"],["s6","6 Conditions ("+M.conditions.length+")"],["s7","7 Certificates"],["s8","8 Footnotes ("+M.foots.length+")"],["s9","9 Attention"]].map(c=>`<a class="chip" href="#${c[0]}" data-j="${c[0]}">${c[1]}</a>`).join("")}</div>`;
+  h+=`<section class="sec" id="s1"><h2>1. COMMODITY</h2><div class="kv"><div>Item ID</div><div>${esc(C.itemId)}</div><div>Description</div><div>${esc(C.description)}</div><div>Declarable</div><div>${yn(C.declarable)}</div><div>Meursing code</div><div>${yn(C.meursing)}</div><div>Productline suffix</div><div>${yn(C.suffix)}</div><div>Number of indents</div><div>${yn(C.indents)}</div></div></section>`;
+  h+=`<section class="sec" id="s2"><h2>2. ANCESTORS (heading, chapter, section)</h2>${M.ancestors.length?`<div class="kv">${M.ancestors.map(a=>`<div>${esc(a.label)}</div><div>${esc(a.text)}</div>`).join("")}</div>`:'<div class="empty">No data.</div>'}</section>`;
+  h+=`<section class="sec" id="s3"><h2>3. META / DUTY CALCULATOR</h2><div class="kv"><div>Source</div><div>${esc(T.source)}</div><div>Trade defence</div><div>${yn(T.tradeDefence)}</div><div>Zero MFN duty</div><div>${yn(T.zeroMfn)}</div><div>Entry price system</div><div>${yn(T.entryPrice)}</div><div>Meursing code</div><div>${yn(T.meursing)}</div><div>VAT options</div><div>${esc(JSON.stringify(T.vat))}</div></div></section>`;
+  h+=`<div class="toolbar"><input id="mf" class="in" style="max-width:420px" placeholder="Filter measures (type, country, duty, ID)..." value="${esc(filter)}"><span class="hint" style="margin:0">Click a row to view measure details.</span></div>`;
+  h+=`<section class="sec" id="s4"><h2>4. IMPORT MEASURES <span>${M.imports.length} measure(s)</span></h2><div id="t4">${measureRows(M.imports,"i")}</div></section>`;
+  h+=`<section class="sec" id="s5"><h2>5. EXPORT MEASURES <span>${M.exports.length} measure(s)</span></h2><div id="t5">${measureRows(M.exports,"e")}</div></section>`;
+  h+=`<section class="sec" id="s6"><h2>6. MEASURE CONDITIONS (all condition objects in scope) <span>${M.conditions.length}</span></h2>${M.conditions.length?`<div class="tw"><table><thead><tr><th>Cond ID</th><th>Code</th><th>Class</th><th>Doc Code</th><th>Action</th><th>Requirement</th></tr></thead><tbody>${M.conditions.map(c=>`<tr><td class="id">${esc(c.id)}</td><td>${esc(c.code)}</td><td>${condTag(c)}</td><td>${esc(c.doc)}</td><td>${esc(c.action)}</td><td>${esc(c.req==null?"null":c.req)}</td></tr>`).join("")}</tbody></table></div>`:'<div class="empty">(none)</div>'}</section>`;
+  h+=`<section class="sec" id="s7"><h2>7. CERTIFICATES REFERENCED BY THIS COMMODITY <span>${M.certs.length}</span></h2>${M.certs.length?`<div class="tw"><table><thead><tr><th>Cert ID</th><th>Type</th><th>Code</th><th>Description</th></tr></thead><tbody>${M.certs.map(c=>`<tr><td class="id">${esc(c.id)}</td><td>${esc(c.type)}</td><td>${esc(c.code)}</td><td>${esc(c.desc)}</td></tr>`).join("")}</tbody></table></div>`:'<div class="empty">(none)</div>'}</section>`;
+  h+=`<section class="sec" id="s8"><h2>8. FOOTNOTES <span>${M.foots.length}</span></h2>${M.foots.length?`<ul class="fn">${M.foots.map(f=>`<li><b>${esc(f.code)}</b>${esc(f.desc)}</li>`).join("")}</ul>`:'<div class="empty">(none)</div>'}</section>`;
+  const st=(n,l)=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`;
+  h+=`<section class="sec" id="s9"><h2>9. CUSTOMS CONTROL - ATTENTION POINTS</h2><div class="grid9">${st(X.docs,"Measures with document requirements")}${st(X.exemptions,"Measures with exemption conditions")}${st(X.thresholds,"Measures with threshold conditions")}${st(X.negatives,"Measures with negative conditions")}${st(X.quota,"Measures linked to a quota order number")}${st(X.nConds,"Distinct measure_condition objects")}${st(X.nCerts,"Distinct certificate objects")}${st(X.nFoots,"Distinct footnote objects")}</div><div class="total">Total measures printed : ${M.total}</div></section>`;
+  $("out").innerHTML=h;bind();
+}
+function refreshTables(){$("t4").innerHTML=measureRows(M.imports,"i");$("t5").innerHTML=measureRows(M.exports,"e");bindRows()}
+function bindRows(){
+  document.querySelectorAll("tr.m").forEach(tr=>tr.onclick=()=>{const k=tr.dataset.k;expanded.has(k)?expanded.delete(k):expanded.add(k);refreshTables()});
+}
+function bind(){
+  document.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{view=b.dataset.v;render()});
+  document.querySelectorAll("[data-j]").forEach(a=>a.onclick=e=>{e.preventDefault();const t=$(a.dataset.j);if(t)t.scrollIntoView({behavior:"smooth",block:"start"})});
+  const mf=$("mf");if(mf)mf.oninput=()=>{filter=mf.value;refreshTables()};
+  $("bcopy").onclick=async()=>{
+    try{await navigator.clipboard.writeText(rawText)}
+    catch(e){const t=document.createElement("textarea");t.value=rawText;document.body.appendChild(t);t.select();document.execCommand("copy");t.remove()}
+    setHint("Report copied to clipboard.");
+  };
+  $("bdl").onclick=()=>{
+    const url=URL.createObjectURL(new Blob([rawText],{type:"text/plain;charset=utf-8"}));
+    const a=document.createElement("a");a.href=url;a.download="tarif-schedule-report-"+curCode+".txt";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
+  };
+  $("bprint").onclick=()=>window.print();
+  bindRows();
+}
+
+/* ---------- Startup ---------- */
+(function(){
+  const y=new Date().getFullYear(),s=$("year");
+  for(let i=y+1;i>=2013;i--){const o=document.createElement("option");o.value=o.textContent=i;if(i===y)o.selected=true;s.appendChild(o)}
+  const h=(location.hash||"").replace("#","");
+  if(/^\d{10}$/.test(h)){$("q").value=h;loadReport(h)}
+  $("q").focus();
+})();
+</script>
+</body>
+</html>
