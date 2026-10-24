@@ -12,7 +12,7 @@ body{background:#eef2f7;padding:20px 3vw}
 .header{min-height:84px;border-bottom:1px solid var(--divider);display:flex;align-items:center;padding:10px 24px;gap:16px}
 .title{font-size:26px;font-weight:700;letter-spacing:1px;color:var(--ink);line-height:1.1}.subtitle{font-size:12px;color:var(--muted);margin-top:3px}
 .main{padding:18px 24px 24px}
-.searchbar{display:grid;grid-template-columns:1fr 150px 100px 90px 120px;gap:10px;align-items:end}
+.searchbar{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:10px;align-items:end}
 .fld label{display:block;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.4px;text-transform:uppercase;margin-bottom:5px}
 .in{width:100%;height:38px;border:1px solid var(--border);border-radius:6px;padding:0 11px;font:14px "Segoe UI";outline:none;background:#fff;color:var(--body)}
 .in:focus{border-color:#8ba9cc;box-shadow:0 0 0 3px rgba(0,108,220,.08)}
@@ -49,9 +49,8 @@ tr.d td{background:#fafcff;padding:10px 14px}
 .grid9{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px;padding:12px 14px}
 .stat{background:#fff;border:1px solid var(--divider);border-radius:8px;padding:10px 12px}.stat b{display:block;font-size:22px;color:var(--ink)}.stat span{font-size:11px;color:var(--muted)}
 .total{padding:10px 14px;font-size:12px;color:var(--muted);text-align:right}
-pre.raw{margin:0;padding:14px;background:#0f172a;color:#e2e8f0;font:12px/1.45 Consolas,"Courier New",monospace;overflow:auto;border-radius:8px}
 ul.fn{list-style:none;margin:0;padding:6px 14px 10px;font-size:12px}ul.fn li{padding:6px 0;border-bottom:1px solid var(--divider)}ul.fn li:last-child{border:0}ul.fn b{font-family:Consolas,monospace;color:var(--accent);margin-right:8px}
-@media(max-width:900px){.searchbar{grid-template-columns:1fr 1fr}.searchbar .fld:first-child{grid-column:1/3}.kv{grid-template-columns:1fr}.header{padding:10px 16px}.main{padding:14px 14px 20px}}
+@media(max-width:900px){.searchbar{grid-template-columns:minmax(0,1fr) 120px}.kv{grid-template-columns:1fr}.header{padding:10px 16px}.main{padding:14px 14px 20px}}
 @media print{body{padding:0;background:#fff}.app{box-shadow:none;border:0}.searchbar,.toolbar,.chips,.sugs,.hint{display:none}}
 </style>
 </head>
@@ -63,9 +62,6 @@ ul.fn{list-style:none;margin:0;padding:6px 14px 10px;font-size:12px}ul.fn li{pad
   <main class="main">
     <div class="searchbar">
       <div class="fld"><label for="q">Code (10 Digits) or Keyword</label><input id="q" class="in" autocomplete="off" spellcheck="false" placeholder="e.g. 8201100000 or shovels..."></div>
-      <div class="fld"><label for="asof">As of Date (Optional)</label><input id="asof" class="in" type="date"></div>
-      <div class="fld"><label for="year">Year (Suggestions)</label><select id="year" class="in"></select></div>
-      <div class="fld"><label for="lang">Language</label><select id="lang" class="in"><option value="en">English</option><option value="fr">French</option><option value="de">German</option><option value="es">Spanish</option></select></div>
       <div class="fld"><label>&nbsp;</label><button id="go" class="btn">Search</button></div>
     </div>
     <div id="hint" class="hint">Enter a 10-digit code to view the report, or a keyword to find code suggestions.</div>
@@ -223,12 +219,12 @@ if(typeof module!=="undefined")module.exports={buildReport,toText,stripHtml};
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-let M=null, rawText="", view="rapport", expanded=new Set(), filter="", curCode="";
+let M=null, rawText="", expanded=new Set(), filter="", curCode="";
 
 /* ---------- Network ---------- */
 function httpErr(status,msg){const e=new Error(msg||("Error "+status));e.status=status;return e}
-async function fetchCommodity(code,asOf){
-  const qs="code="+code+(asOf?"&as_of="+asOf:"");
+async function fetchCommodity(code){
+  const qs="code="+code;
   let r=null;
   try{r=await fetch("/api/commodity?"+qs)}catch(e){r=null}
   if(r&&(r.headers.get("content-type")||"").includes("json")){
@@ -238,14 +234,14 @@ async function fetchCommodity(code,asOf){
   }
   // Fallback: direct request (requires browser access to the API)
   let r2;
-  try{r2=await fetch("https://www.trade-tariff.service.gov.uk/xi/api/v2/commodities/"+code+(asOf?"?as_of="+asOf:""),{headers:{Accept:"application/json"}})}
+  try{r2=await fetch("https://www.trade-tariff.service.gov.uk/xi/api/v2/commodities/"+code,{headers:{Accept:"application/json"}})}
   catch(e){throw httpErr(0,"Service unavailable: check your connection and that the Netlify function is deployed.")}
   if(r2.status===404)throw httpErr(404,"Code not found or not declarable (a declarable 10-digit code is required).");
-  if(!r2.ok)throw httpErr(r2.status,"Error du service ("+r2.status+").");
+  if(!r2.ok)throw httpErr(r2.status,"Service error ("+r2.status+").");
   return r2.json();
 }
 async function fetchSuggest(term){
-  const r=await fetch("/api/suggest?term="+encodeURIComponent(term)+"&year="+encodeURIComponent($("year").value)+"&lang="+encodeURIComponent($("lang").value));
+  const r=await fetch("/api/suggest?term="+encodeURIComponent(term));
   const d=await r.json().catch(()=>null);
   if(!r.ok)throw httpErr(r.status,d&&d.error);
   return d;
@@ -285,7 +281,7 @@ async function loadReport(code){
   $("go").disabled=true;setHint("Loading report for "+code+"...");
   $("out").innerHTML='<div class="state"><strong>Loading...</strong>Retrieving tariff data.</div>';
   try{
-    const json=await fetchCommodity(code,$("asof").value);
+    const json=await fetchCommodity(code);
     M=buildReport(json);rawText=toText(M);curCode=code;expanded=new Set();filter="";
     try{history.replaceState(null,"","#"+code)}catch(e){}
     setHint("");render();
@@ -326,13 +322,10 @@ function render(){
   if(!M){$("out").innerHTML="";return}
   const C=M.commodity,T=M.meta,X=M.attention;
   let h=`<div class="toolbar">
-    <button class="btn2 ${view==="rapport"?"on":""}" data-v="rapport">Report</button>
-    <button class="btn2 ${view==="brut"?"on":""}" data-v="brut">Plain Text</button>
     <span class="grow"></span>
     <button class="btn2" id="bcopy">Copy Report</button>
     <button class="btn2" id="bdl">Download (.txt)</button>
     <button class="btn2" id="bprint">Print</button></div>`;
-  if(view==="brut"){$("out").innerHTML=h+`<pre class="raw">${esc(rawText)}</pre>`;bind();return}
   h+=`<div class="chips">${[["s1","1 Commodity"],["s2","2 Ancestors"],["s3","3 Meta"],["s4","4 Import ("+M.imports.length+")"],["s5","5 Export ("+M.exports.length+")"],["s6","6 Conditions ("+M.conditions.length+")"],["s7","7 Certificates"],["s8","8 Footnotes ("+M.foots.length+")"],["s9","9 Attention"]].map(c=>`<a class="chip" href="#${c[0]}" data-j="${c[0]}">${c[1]}</a>`).join("")}</div>`;
   h+=`<section class="sec" id="s1"><h2>1. COMMODITY</h2><div class="kv"><div>Item ID</div><div>${esc(C.itemId)}</div><div>Description</div><div>${esc(C.description)}</div><div>Declarable</div><div>${yn(C.declarable)}</div><div>Meursing code</div><div>${yn(C.meursing)}</div><div>Productline suffix</div><div>${yn(C.suffix)}</div><div>Number of indents</div><div>${yn(C.indents)}</div></div></section>`;
   h+=`<section class="sec" id="s2"><h2>2. ANCESTORS (heading, chapter, section)</h2>${M.ancestors.length?`<div class="kv">${M.ancestors.map(a=>`<div>${esc(a.label)}</div><div>${esc(a.text)}</div>`).join("")}</div>`:'<div class="empty">No data.</div>'}</section>`;
@@ -352,7 +345,6 @@ function bindRows(){
   document.querySelectorAll("tr.m").forEach(tr=>tr.onclick=()=>{const k=tr.dataset.k;expanded.has(k)?expanded.delete(k):expanded.add(k);refreshTables()});
 }
 function bind(){
-  document.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{view=b.dataset.v;render()});
   document.querySelectorAll("[data-j]").forEach(a=>a.onclick=e=>{e.preventDefault();const t=$(a.dataset.j);if(t)t.scrollIntoView({behavior:"smooth",block:"start"})});
   const mf=$("mf");if(mf)mf.oninput=()=>{filter=mf.value;refreshTables()};
   $("bcopy").onclick=async()=>{
@@ -370,8 +362,6 @@ function bind(){
 
 /* ---------- Startup ---------- */
 (function(){
-  const y=new Date().getFullYear(),s=$("year");
-  for(let i=y+1;i>=2013;i--){const o=document.createElement("option");o.value=o.textContent=i;if(i===y)o.selected=true;s.appendChild(o)}
   const h=(location.hash||"").replace("#","");
   if(/^\d{10}$/.test(h)){$("q").value=h;loadReport(h)}
   $("q").focus();
